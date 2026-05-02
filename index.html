@@ -1,3 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KawaiiKamera ♪ Photobooth</title>
+
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --aura-pink: #ffb6e6;
+      --aura-hot-pink: #ff6fb7;
+      --aura-dark: #3b2b40;
+      --countdown-pink: #ffd4f6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #ffe6f5, #fff0f7 40%, #ffffff);
+      color: var(--aura-dark);
+    }
+
+    .kawaii-shell {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    .kawaii-card {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 182, 230, 0.85),
+        rgba(255, 245, 251, 0.95)
+      );
+      border-radius: 0;
+      padding: 1.75rem;
+      border: 1px solid #000;
+    }
+
+    .kawaii-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .kawaii-header h1 {
+      font-weight: 700;
+      font-size: 2.4rem;
+      letter-spacing: 1px;
+    }
+
+    .ascii {
+      font-size: 1.2rem;
+      line-height: 1.2;
+      white-space: pre-line;
+    }
+
+    /* UPDATED MARQUEE */
+    .aura-marquee {
+      margin-top: 0.8rem;
+      border: 1px solid #000;
+      background: #ffffff;
+      padding: 0.25rem 0;
+      overflow: hidden;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .aura-marquee-inner {
+      display: inline-block;
+      white-space: nowrap;
+      animation: aura-scroll 10s linear infinite;
+    }
+
+    .aura-marquee-inner span {
+      padding-right: 2rem; /* space between repeats */
+    }
+
+    @keyframes aura-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .camera-wrapper {
+      position: relative;
+      border-radius: 0;
+      overflow: hidden;
+      border: 1px solid #000;
+      background: #000;
+      aspect-ratio: 4 / 3;
+    }
+
+    video#camera {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* mirror selfie */
+    }
+
+    /* overlay image on top of camera */
+    .overlay-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* show full overlay */
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .countdown-overlay,
+    .flash-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .countdown-overlay {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--countdown-pink);
+      background: transparent;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .flash-overlay {
+      background: #ffffff;
+    }
+
+    canvas#photoCanvas,
+    canvas#stripCanvas {
+      display: none;
+    }
+
+    .preview-frame {
+      margin-top: 1rem;
+      border-radius: 0;
+      background: #ffffff;
+      padding: 0.75rem;
+      text-align: center;
+      min-height: 120px;
+      border: 1px solid #000;
+    }
+
+    .preview-frame img {
+      max-width: 100%;
+      border-radius: 0;
+      border: 1px dashed var(--aura-hot-pink);
+    }
+
+    .kawaii-btn {
+      border-radius: 0;
+      border: 1px solid #000;
+      font-weight: 600;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .kawaii-btn-primary {
+      background: var(--aura-hot-pink);
+      color: #fff;
+      border: 1px solid #000;
+    }
+
+    .filter-pill {
+      cursor: pointer;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0;
+      border: 1px solid #000;
+      background: #fff;
+      font-size: 0.8rem;
+      margin: 0.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .filter-pill.active {
+      background: var(--aura-pink);
+      font-weight: 600;
+    }
+
+    .sidebar-kawaii {
+      border-radius: 0;
+      padding: 1rem 1.25rem;
+      background: #ffffff;
+      border: 1px dashed #000;
+      font-size: 0.9rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      background: #ffffff;
+      border: 1px solid #000;
+      margin-top: 0.5rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #aaa;
+    }
+
+    .status-dot.live {
+      background: #ff4b8b;
+      box-shadow: 0 0 7px rgba(255, 75, 139, 0.7);
+    }
+
+    /* Cross + Kitty layout in right column */
+    .ascii-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
     .ascii-art-large {
       font-size: 0.35rem;
       line-height: 1;
@@ -21,12 +265,438 @@
     <!-- HEADER -->
     <div class="kawaii-header">
       <div class="ascii">
-        Hiii ! :3<br />
         Hi friends and family ! Welcome to my photobooth :3 this was one of my final class projects where I had to code a website. All instructions should be on the right hand side of the page, enjoy! <br />
         ˚⊹ ♡ ˚₊‧꒰ა ♱ ໒꒱ ‧₊˚ ♡ ⊹˚
       </div>
 
-@@ -700,3 +700,4 @@
+      <h1>˚⊹ ♡ Bianca's 21st Birthday ♡ ⊹˚</h1>
+      ˚₊‧꒰ა ♪ ໒꒱ ‧₊˚
+
+      <!-- UPDATED MARQUEE HTML -->
+      <div class="aura-marquee">
+        <div class="aura-marquee-inner">
+
+          <span>‧˚₊⊹ you have aura ⊹₊˚‧</span>
+          <span>‧˚₊⊹ swag af ⊹₊˚‧</span>
+          <span>‧˚₊⊹ super kawaii ⊹₊˚‧</span>
+           <span>‧˚₊⊹ u a baddie ⊹₊˚‧</span>
+           <span>‧˚₊⊹ you have aura ⊹₊˚‧</span>
+           <span>‧˚₊⊹ too much rizz ⊹₊˚‧</span>
+           <span>‧˚₊⊹ super kawaii ⊹₊˚‧</span>
+           <span>‧˚₊⊹ yas baddie ⊹₊˚‧</span>
+           <span>‧˚₊⊹ wow ⊹₊˚‧</span>
+           <span>‧˚₊⊹ aura farming fr ⊹₊˚‧</span>
+          <span>‧˚₊⊹ slayyyyyy ⊹₊˚</span>
+          <span>‧˚₊⊹ w rizzzzzzzzzz ⊹₊˚</span>
+           <span>‧˚₊⊹ whats 4 + 4? ⊹₊˚</span>
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="kawaii-card">
+      <div class="row g-4">
+
+        <!-- LEFT SIDE -->
+        <div class="col-md-7">
+          <div class="camera-wrapper mb-2">
+            <video id="camera" autoplay playsinline></video>
+            <!-- overlay on top -->
+            <img id="overlayImage" class="overlay-image" alt="" />
+            <div id="countdownOverlay" class="countdown-overlay"></div>
+            <div id="flashOverlay" class="flash-overlay"></div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button id="startCameraBtn" class="kawaii-btn kawaii-btn-primary">
+               use my camera plz!
+            </button>
+
+            <button id="takePhotoBtn" class="kawaii-btn" disabled>
+              ㆍ₊♡˚ʚ take a pic ɞ˚♡₊ㆍ
+            </button>
+
+            <button id="takeStripBtn" class="kawaii-btn" disabled>
+              ˚₊‧꒰ა 4-photo strip pic ໒꒱ ‧₊˚
+            </button>
+
+            <a
+              id="downloadLink"
+              class="kawaii-btn kawaii-btn-primary ms-auto disabled"
+              href="#"
+              download="kawaii-photo.png"
+              aria-disabled="true"
+            >
+              ⤵ Save photo ₊⊹
+            </a>
+          </div>
+
+          <div class="status-badge">
+            <!-- optional live dot:
+            <span class="status-dot" id="statusDot"></span>
+            -->
+            <span id="statusText">Camera not started yet…</span>
+          </div>
+
+          <div class="preview-frame mt-3">
+            <p class="mb-1 small">Preview ♪</p>
+            <img id="previewImage" alt="ur photo will appear here <3
+                                        ⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⢀⡀⠀
+⣴⠛⠉⠉⠱⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠞⠉⠉⠙⣦
+⣧⠀⠀⠀⠀⠀⠙⢦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡴⠋⠀⠀⠀⠀⠀⣼
+⠹⣄⠀⠀⠀⠀⠀⠀⠈⠙⠲⠦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡴⠖⠋⠀⠀⠀⠀⠀⠀⠀⣠⠏
+⠀⠙⢶⣄⡀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢦⡀⠀⠀⠀⠀⠀⢀⡴⠋⠁⠀⠀⠀⠀⠀⠀⠀⣀⣠⡾⠋⠀
+⠀⠀⡼⠋⠉⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⢹⡄⠀⠀⠀⢠⡟⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠉⠙⢧⠀⠀
+⠀⠈⢧⡀⠀⠀⠀⠀⠀⢀⠀⣴⠋⡉⢳⡄⣷⠀⠀⠀⣾⢠⡞⠉⠙⣦⠀⠀⢀⠀⠀⠀⠀⢀⡼⠀⠀
+⠀⠀⠈⠙⠒⢲⡟⠀⠀⠀⠀⢻⣄⠙⠛⣱⠇⠀⠀⠀⠸⣎⠛⠋⣠⡟⠀⠀⠈⠀⢻⡗⠒⠋⠁⠀⠀
+⠀⠀⠀⠀⠀⠈⠷⣄⣀⣀⣀⣤⠟⠛⠛⠁⠀⠀⠀⠀⠀⠈⠛⠛⠻⣤⣀⣀⣀⣤⠾⠁⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠈⠁⠉⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠉⠈⠀⠀⠀⠀⠀⠀⠀⠀
+" />
+          </div>
+
+          <canvas id="photoCanvas"></canvas>
+          <canvas id="stripCanvas"></canvas>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="col-md-5 d-flex flex-column gap-3">
+          <div class="sidebar-kawaii">
+            <h2>Filters ♡</h2>
+            <p class="mb-2 small">Click any filter </p>
+            <div id="filtersContainer">
+              <!-- Filter pills will be injected here from JS -->
+            </div>
+          </div>
+
+          <div class="sidebar-kawaii">
+            <h2>How it works ! ♪</h2>
+            <ul>
+              <li>Click “Use my camera” and allow access </li>
+              <li>Select a filter </li>
+              <li>Take a single photo or 4-photo strip </li>
+              <li>Wait for the countdown and pose :D</li>
+              <li>Save it 𐔌՞ ܸ.ˬ.ܸ՞𐦯</li>
+              <li>Click on the download ^ (it should be named "kawaii-photo")</li>
+              <li>Press "share" then airdrop it to yourself !</li>
+            </ul>
+          </div>
+
+          <!-- CROSS + HELLO KITTY SIDE BY SIDE -->
+          <div class="ascii-row">
+            <!-- Cross -->
+            <div class="ascii-art-large">
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠂⡇⠀⠀⠑⠠⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠊⠀⠀⢀⢣⠀⠀⠀⠀⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⢀⡀⢀⠀⣀⠜⠀⠀⠀⠀⠞⢀⠂⠀⠀⣄⢀⡀⠄⠀⠀⣀⣀⣀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⠬⠾⠷⠛⠒⠓⢺⠒⠒⠒⠲⡄⢾⠊⠇⡉⠀⠐⠒⠚⠋⠁⠀⠀⠈⠑⢺⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠁⠀⠀⠀⠀⠘⣏⡏⠸⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⡆⠀⠀⠀⠀⠀⣿⠁⠐⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⡠⢄⡀⠀⠀⠀⠀⠀⠀⠀⢣⠇⠀⠀⠀⠀⠀⣿⠀⢀⠀⢀⣀⣀⠀⠀⠀⠀⠀⢀⡤⠊⠁⠈⠁⢂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⡠⠛⠀⠀⠀⠀⠘⠘⠧⡀⠀⠀⠀⠀⠀⠀⠜⡄⠀⠀⠀⠀⡇⠀⠀⡠⠃⠀⠘⢇⠀⠀⠀⠀⡼⠀⠀⠀⠀⠀⢘⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⡠⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠱⣆⠀⢀⣤⡄⠀⠀⠙⠶⢤⣤⣤⠆⠀⠸⠀⠀⠀⠀⢁⠇⠀⠀⠀⡇⠀⠀⠀⠈⠉⢱⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢠⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⠦⠿⡻⢉⣲⠠⠀⠀⣀⡀⢀⢃⠀⢐⠠⢢⠀⠀⠁⠀⠀⠀⠀⠡⡀⠀⠀⠀⠀⠸⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠃⠀⠐⠛⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⡤⣾⡗⢡⣶⡞⠈⡆⣸⣼⣿⢈⢘⡉⡀⠀⠀⠀⢂⠀⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠋⠃⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣦⠛⢻⠜⠛⣅⢸⢹⠘⠉⠉⠘⠱⡀⠀⠀⠀⠤⠠⠀⠐⠈⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⣇⠀⠀⢀⣠⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠑⢦⣌⠖⢉⣀⣸⠹⢠⠀⠀⠀⠀⠙⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⡒⢆⠀⠀⠀⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⣀⠠⢊⡌⠷⣀⢺⡈⠛⠀⢀⣄⢀⠀⣤⡆⠄⠀⠀⠀⠀⠈⠀⢱⣿⠻⠂⠘⣇⡀⠀⠀⠀⠀⠁⠂⠠⠀⠄⠐⠨⠖⣄⠀⠀⣸⠆⢀⡴⢋⡌⠤⢀⣀⠀⠀⠀⠀⠀
+⠤⣤⣤⡔⠁⢐⡎⠈⢓⠬⠉⠉⠉⠲⠿⡻⠀⣾⣿⢶⠘⡶⡶⠶⠦⠒⡚⠻⠥⢷⠀⢽⢊⣛⡛⠒⠶⠴⠶⠶⠶⠶⠶⠶⠶⠾⠷⠾⠯⠀⠉⠥⢔⠋⠈⡖⠀⠓⢤⣤⡤⠄⠠
+⠀⠀⠀⠚⠲⠌⣑⡄⢁⣤⠶⠒⠒⢲⣶⠃⢀⣿⡟⢻⡖⠛⠛⠛⠗⠒⠫⢀⡘⣮⣖⠈⠩⣐⠤⠒⠒⠛⠛⠛⠛⠛⠛⠛⠛⠛⠓⠒⠒⠒⠲⢦⢄⠁⣄⡡⠔⠛⠂⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⣤⠋⠀⠀⠀⠀⠈⠁⠁⠀⠀⠀⠜⡳⢀⠀⢈⠀⠀⠀⠀⢹⣇⢋⢀⣼⡾⣉⠉⠁⢢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢣⠇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡜⠀⠀⠉⠛⢹⠛⠉⢦⡀⢈⢋⠆⢸⠏⠁⢀⡅⠀⣌⠆⠀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⠂⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠸⠿⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠃⠀⠀⠀⠀⠈⣂⠀⠀⠈⠲⢸⢦⠎⠀⠀⠈⠀⠀⠀⠀⠀⡠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠛⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠘⢦⢀⠀⠀⢸⢀⡥⢀⡀⠀⠀⠀⢀⠀⠂⠃⠀⠀⠀⠀⢰⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡤⠀⠀⣀⣄⡠⢤⢤⣀⠙⠳⣴⢸⠒⠞⠄⠀⠉⠀⠁⠀⠠⠤⠘⡄⡀⠀⠀⣸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⠀⠉⠁⠀⠀⠀⠈⠙⡁⣀⠀⢸⢁⡽⢼⠢⣀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡴⠁⢛⡄⠀⠀⠀⠀⠀⠀⠀⠀⠐⢿⢸⠀⠀⠀⠉⠳⠳⡀⠀⠀⠀⡇⠀⠀⠀⠀⠸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡜⠀⠀⢸⣣⠀⠀⠀⢀⣄⠞⠁⢢⠀⠘⢸⠀⠀⠀⠀⠀⣱⢁⠀⠀⠀⡇⠀⠀⠂⠀⢀⠜⠁⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠀⠀⠀⠈⣿⠂⠀⠀⠈⠁⠀⠀⠀⢡⠐⢸⠀⣄⣠⠖⠉⠘⡻⠀⠀⠀⠁⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣇⠀⠀⠀⠀⠀⠀⢀⣀⢶⠘⠀⣽⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢏⢄⠀⠀⠀⢰⡣⡀⢹⢸⢸⠎⠀⢠⣴⠖⢛⠒⢦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢶⡀⠀⠀⠘⠖⠃⠘⣨⢸⣀⡼⠋⠀⠀⠀⠉⠀⠁⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢧⡐⢂⢀⢆⠀⣨⣷⡞⠘⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⠈⠀⠀⠈⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢦⠶⠀⠷⣿⣿⣻⣿⣜⢷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⢠⡴⡄⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣷⣍⢉⣠⠀⠁⠙⠒⠚⠓⠢⣢⠀⠀⠀⠓⠌⠑⠁⢀⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⠋⠀⢣⡄⠀⠀⠀⠀⠀⠀⠈⣧⠀⠀⠀⠀⢠⢰⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡴⣠⣀⣀⡤⠾⡫⠈⢰⡤⣆⡻⠦⣄⠤⠄⢐⣢⠀⠈⠁⠒⠒⠒⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠁⣀⠀⠛⢯⡲⡾⡎⣦⢟⣽⣷⡀⠐⠂⠈⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠀⠈⠑⢦⡀⠩⣮⠹⣱⡿⠟⠉⠛⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢦⠀⠳⡀⠸⣷⡏⠀⠀⠀⠀⢸⢡⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢣⠀⢁⠀⢻⠀⠀⠀⢶⣲⠞⠈⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡆⠸⡀⠈⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠸⠁⠀⠀⠀⠀⠀⠀⠘⢄⣒⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠨⡴⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡤⡀⢠⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠂⠁⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⣰⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            </div>
+
+            <!-- Hello Kitty next to it -->
+            <div class="hello-kitty-art">
+⠀⠀⠀⠀⠀⠀⢀⡤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠘⢄⠙⣠⠇⠀⠀⣠⠠⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠳⠁⠀⠀⢰⠁⠀⠀⠈⠳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢀⣀⣀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠘⣆⢀⣀⠤⠖⠒⢢⠀⠀⠀⠀⠀
+⠀⠀⠀⢠⡮⠁⠉⠁⠒⠤⢀⡼⠖⠀⠐⣗⠢⡀⢸⣏⡁⠀⠀⢀⡠⠥⠒⠲⠤⢄
+⠀⠀⠀⣼⠀⠀⠀⠀⠀⠀⡞⠀⠀⠀⣀⣈⣍⣈⡿⡘⠁⣹⡚⠁⠀⠀⠀⠀⠀⣼
+⠀⠀⠀⠸⡀⠀⠀⠀⠀⠀⣇⣠⡶⣍⣀⣠⠴⠛⠻⢇⣜⡁⠺⠽⠀⠀⠀⢠⡞⠁
+⠀⠀⠀⢰⠇⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⢷⡀⠀⠀⢀⡏⠀⠀
+⠀⠀⠀⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢳⡉⢳⡄⣸⠁⠀⠀
+⠀⠀⢸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠿⢻⡖⠒⠂
+⠈⠉⠸⡍⠈⠀⠀⠘⣶⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠈⢦⣶⡄⠀⠀⠠⢸⠅⣀⠀
+⠀⠀⠔⢷⠈⠀⠀⠀⠘⠛⠁⠀⠀⠀⣤⢤⠀⠀⠀⠀⠸⠿⠁⠀⢀⣠⠟⠀⠀⠀
+⠀⠀⠀⣀⠷⢎⠁⠀⢀⡀⠀⠀⠀⠀⠙⠉⠀⠀⠀⠀⠀⠀⠀⣀⠴⠋⠈⠒⠀⠀
+⠀⠀⠀⠁⠀⠀⠉⡖⠀⠈⠑⡦⠤⠄⠄⠀⠤⠤⠤⡖⠉⠉⠹⡁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⠒⠛⠊⠁⠀⠀⠀⠀⠀⠀⠀⠙⠒⠲⠞⠁⠀⠀⠀⠀⠀⠀
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    const video = document.getElementById("camera");
+    const startBtn = document.getElementById("startCameraBtn");
+    const takeBtn = document.getElementById("takePhotoBtn");
+    const takeStripBtn = document.getElementById("takeStripBtn");
+    const downloadLink = document.getElementById("downloadLink");
+    const previewImage = document.getElementById("previewImage");
+    const photoCanvas = document.getElementById("photoCanvas");
+    const stripCanvas = document.getElementById("stripCanvas");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const countdownOverlay = document.getElementById("countdownOverlay");
+    const flashOverlay = document.getElementById("flashOverlay");
+    const filtersContainer = document.getElementById("filtersContainer");
+    const overlayImg = document.getElementById("overlayImage");
+
+    let currentStream = null;
+    let currentFilterKey = "normal";
+
+    const FILTERS = [
+      { key: "normal",     label: "⋆.𐙚 ̊ Normal", css: "none",                            overlay: null },
+      { key: "bmw",        label: "☯︎ B&W",           css: "grayscale(1) contrast(1.2)",      overlay: null },
+      { key: "glitch",     label: "𝄞 warm",          css: "contrast(1.3) saturate(1.4) hue-rotate(10deg)", overlay: null },
+
+      { key: "wuts9",      label: "wuts 9 + 10 ( °ヮ° ) ?",
+        css: "brightness(1.25) contrast(1.1) saturate(1.15) hue-rotate(0deg)",
+        overlay: "1_A.png" },
+
+      { key: "sixtyseven", label: "67",
+        css: "brightness(1.8) contrast(1.45) saturate(2.0) hue-rotate(160deg)",
+        overlay: "2_A.png" },
+
+      { key: "snow",       label: "❄ snowy",          css: "none", overlay: "3_A.png" },
+      { key: "pusheen",    label: "₍^. .^₎⟆ meow",   css: "none", overlay: "4_A.png" },
+      { key: "twentyone",  label: "212121",           css: "none", overlay: "5_A.png" },
+      { key: "baka",       label: "(╥‸╥) baka ",      css: "none", overlay: "6_A.png" },
+      { key: "lawyer",     label: "(⸝⸝๑﹏๑⸝⸝) lawyer dawg", css: "none", overlay: "7_A.png" },
+      { key: "mebtw",      label: ":3 this is me btw", css: "none", overlay: "8_A.png" },
+
+      { key: "angel",      label: "ଘ(੭ˊᵕˋ)੭ angel",
+        css: "brightness(1.35) contrast(1.15) saturate(1.25) hue-rotate(14deg)",
+        overlay: "9_A.png" },
+
+      { key: "hearts",     label: "♡ hai", css: "none", overlay: "10_A.png" },
+
+      /* NEW OVERLAYS YOU ASKED TO ADD */
+      { key: "bday21",   label: " ⊹ ࣪ ⑅ happy bday ! ♡ ࣪ ⑅ ",     css: "none", overlay: "overlay_birthday21.png" },
+      { key: "music",    label: "♫ i love music",   css: "none", overlay: "overlay_music.png" },
+      { key: "angelsoft",label: "ღ ⋆. 𐙚 ˚",   css: "none", overlay: "overlay_angel_hearts.png" },
+      { key: "noob",     label: "roblox !!",     css: "none", overlay: "overlay_roblox.png" },
+      { key: "bears",    label: "korillakkumas ฅ՞•ﻌ•՞ฅ",     css: "none", overlay: "overlay_bears.png" },
+      { key: "goth",     label: ".⋆♱ cybersigilism",      css: "none", overlay: "overlay_goth.png" },
+      { key: "mymelo",   label: "Ი⑅𐑼 melody & sweet piano",       css: "none", overlay: "overlay_mymelody.png" },
+      { key: "clouds",   label: "─୨ৎ-lacey",    css: "none", overlay: "overlay_clouds.png" },
+    ];
+
+    const FILTER_CONFIG = Object.fromEntries(FILTERS.map(f => [f.key, f]));
+
+    function renderFilters() {
+      filtersContainer.innerHTML = "";
+      FILTERS.forEach(filter => {
+        const pill = document.createElement("span");
+        pill.className = "filter-pill";
+        if (filter.key === currentFilterKey) pill.classList.add("active");
+        pill.dataset.filter = filter.key;
+        pill.textContent = filter.label;
+        pill.addEventListener("click", () => setFilter(filter.key));
+        filtersContainer.appendChild(pill);
+      });
+    }
+
+    function setFilter(key) {
+      currentFilterKey = key;
+      const cfg = FILTER_CONFIG[key] || { css: "none", overlay: null };
+
+      video.style.filter = cfg.css || "none";
+
+      if (cfg.overlay) {
+        overlayImg.src = cfg.overlay;
+        overlayImg.style.opacity = 1;
+      } else {
+        overlayImg.style.opacity = 0;
+        overlayImg.removeAttribute("src");
+      }
+
+      document
+        .querySelectorAll(".filter-pill")
+        .forEach(p =>
+          p.classList.toggle("active", p.dataset.filter === key)
+        );
+    }
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        currentStream = stream;
+        video.srcObject = stream;
+        takeBtn.disabled = false;
+        takeStripBtn.disabled = false;
+        statusText.textContent = "Camera is live ૮꒰ ྀི >⸝⸝⸝< ྀི꒱ა !";
+        if (statusDot) statusDot.classList.add("live");
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Camera access blocked";
+        alert("Please allow camera access.");
+      }
+    }
+
+    function ensureVideoReady() {
+      return !!video.videoWidth && !!video.videoHeight;
+    }
+
+    function showCountdown(seconds) {
+      return new Promise((resolve) => {
+        let remaining = seconds;
+        countdownOverlay.style.opacity = 1;
+        countdownOverlay.textContent = remaining;
+
+        const intervalId = setInterval(() => {
+          remaining--;
+          if (remaining > 0) {
+            countdownOverlay.textContent = remaining;
+          } else {
+            clearInterval(intervalId);
+            countdownOverlay.style.opacity = 0;
+            resolve();
+          }
+        }, 1000);
+      });
+    }
+
+    function flashOnce() {
+      flashOverlay.style.opacity = 1;
+      setTimeout(() => {
+        flashOverlay.style.opacity = 0;
+      }, 120);
+    }
+
+    function captureSingleFrameToCanvas(targetCanvas, x, y, width, height) {
+      const ctx = targetCanvas.getContext("2d");
+      const cfg = FILTER_CONFIG[currentFilterKey] || { css: "none", overlay: null };
+
+      ctx.filter = cfg.css || "none";
+
+      ctx.save();
+      ctx.translate(x + width, y);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, width, height);
+      ctx.restore();
+
+      if (cfg.overlay && overlayImg.complete && overlayImg.naturalWidth > 0) {
+        ctx.filter = "none";
+
+        if (currentFilterKey === "angel") {
+          const scale = 0.75;
+          const ow = width * scale;
+          const oh = height * scale;
+          const ox = x + (width - ow) / 2;
+          const oy = y + (height - oh) / 2;
+          ctx.drawImage(overlayImg, ox, oy, ow, oh);
+        } else {
+          ctx.drawImage(overlayImg, x, y, width, height);
+        }
+      }
+    }
+
+    async function captureSinglePhoto() {
+      if (!ensureVideoReady()) return;
+      await showCountdown(3);
+
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+
+      photoCanvas.width = width;
+      photoCanvas.height = height;
+
+      const ctx = photoCanvas.getContext("2d");
+      ctx.clearRect(0, 0, width, height);
+
+      captureSingleFrameToCanvas(photoCanvas, 0, 0, width, height);
+
+      const url = photoCanvas.toDataURL("image/png");
+      previewImage.src = url;
+      downloadLink.href = url;
+      downloadLink.download = "kawaii-photo.png";
+      downloadLink.classList.remove("disabled");
+      downloadLink.setAttribute("aria-disabled", "false");
+    }
+
+    async function captureStripWithCountdown() {
+      if (!ensureVideoReady()) return;
+
+      const singleW = video.videoWidth;
+      const singleH = video.videoHeight;
+      const cols = 2;
+      const rows = 2;
+
+      stripCanvas.width = singleW * cols;
+      stripCanvas.height = singleH * rows;
+
+      const ctx = stripCanvas.getContext("2d");
+      ctx.clearRect(0, 0, stripCanvas.width, stripCanvas.height);
+
+      const positions = [
+        [0, 0],
+        [singleW, 0],
+        [0, singleH],
+        [singleW, singleH],
+      ];
+
+      statusText.textContent = "Taking 4 photos…";
+
+      for (let i = 0; i < positions.length; i++) {
+        await showCountdown(3);
+        flashOnce();
+        const [px, py] = positions[i];
+        captureSingleFrameToCanvas(stripCanvas, px, py, singleW, singleH);
+      }
+
+      const url = stripCanvas.toDataURL("image/png");
+      previewImage.src = url;
+      downloadLink.href = url;
+      downloadLink.download = "kawaii-strip.png";
+      downloadLink.classList.remove("disabled");
+      downloadLink.setAttribute("aria-disabled", "false");
+      statusText.textContent = "4-photo strip ready ♡";
+    }
+
+    renderFilters();
+    setFilter("normal");
+
+    startBtn.onclick = startCamera;
+    takeBtn.onclick = captureSinglePhoto;
+    takeStripBtn.onclick = captureStripWithCountdown;
   </script>
 </body>
 </html>
